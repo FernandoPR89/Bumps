@@ -2,7 +2,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1. Cargar el archivo (Asegúrate de poner el nombre correcto de tu archivo)
-file_path = 'data/sesion_1770608727083.csv'
+#file_path = 'data/sesion_1770608727083.csv'
+#file_path = 'data/sesion_1770638989431.csv'
+#file_path = 'data/sesion_1770639148633.csv'
+#file_path = 'data/sesion_1770642504456.csv'
+#file_path = 'data/sesion_1770642647648.csv'
+file_path = 'data/sesion_1770644854393.csv'
+#file_path = 'data/sesion_1770645428606.csv' # Caminar
+#file_path = 'data/sesion_1770645524700.csv' # Subir escaleras
 df = pd.read_csv(file_path)
 
 # 2. Convertir el timestamp ISO 8601 a objetos datetime y calcular tiempo relativo
