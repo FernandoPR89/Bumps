@@ -1,43 +1,52 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# 1. Cargar el archivo (Asegúrate de poner el nombre correcto de tu archivo)
-#file_path = 'data/sesion_1770608727083.csv'
-#file_path = 'data/sesion_1770638989431.csv'
-#file_path = 'data/sesion_1770639148633.csv'
-#file_path = 'data/sesion_1770642504456.csv'
-#file_path = 'data/sesion_1770642647648.csv'
-file_path = 'data/sesion_1770644854393.csv'
-#file_path = 'data/sesion_1770645428606.csv' # Caminar
-#file_path = 'data/sesion_1770645524700.csv' # Subir escaleras
+# 1. Cargar el nuevo archivo
+file_path = 'data/viaje_1770688696371.csv'
 df = pd.read_csv(file_path)
 
-# 2. Convertir el timestamp ISO 8601 a objetos datetime y calcular tiempo relativo
+# 2. Preparación de datos
 df['timestamp'] = pd.to_datetime(df['timestamp'])
 df['rel_time'] = (df['timestamp'] - df['timestamp'].iloc[0]).dt.total_seconds()
 
-# 3. Visualización
+# Separamos los datos del sensor (STREAM) de las marcas manuales (MANUAL)
+df_sensor = df[df['tipo'] == 'STREAM'].copy()
+df_manual = df[df['tipo'] == 'MANUAL'].copy()
+
+# 3. Visualización Pro
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
 
-# Gráfica de Ejes Crudos (X, Y, Z)
-ax1.plot(df['rel_time'], df['x_raw'], label='X (Lateral)', alpha=0.7)
-ax1.plot(df['rel_time'], df['y_raw'], label='Y (Longitudinal)', alpha=0.7)
-ax1.plot(df['rel_time'], df['z_raw'], label='Z (Vertical)', alpha=0.7)
-ax1.set_title('Señales Crudas del Acelerómetro (Bolsa del Pantalón)')
+# --- GRÁFICA 1: EJES X, Y, Z ---
+ax1.plot(df_sensor['rel_time'], df_sensor['x'], label='X (Lateral)', alpha=0.7)
+ax1.plot(df_sensor['rel_time'], df_sensor['y'], label='Y (Longitudinal)', alpha=0.7)
+ax1.plot(df_sensor['rel_time'], df_sensor['z'], label='Z (Vertical)', alpha=0.7)
+
+# Dibujar líneas rojas donde presionaste el botón MANUAL
+for t in df_manual['rel_time']:
+    ax1.axvline(x=t, color='red', linestyle='--', linewidth=2, label='MARCA MANUAL' if t == df_manual['rel_time'].iloc[0] else "")
+
+ax1.set_title('Señales del Acelerómetro con Marcas Manuales')
 ax1.set_ylabel('Aceleración (m/s²)')
 ax1.legend()
-ax1.grid(True, linestyle='--', alpha=0.6)
+ax1.grid(True, linestyle='--', alpha=0.5)
 
-# Gráfica de Magnitud Filtrada (La que usa tu App)
-ax2.plot(df['rel_time'], df['magnitude_filtered'], color='black', linewidth=1.5, label='Magnitud (Filtrada)')
-# Línea de umbral sugerida (0.4)
-ax2.axhline(y=0.4, color='red', linestyle=':', label='Umbral Sugerido')
+# --- GRÁFICA 2: MAGNITUD ---
+ax2.plot(df_sensor['rel_time'], df_sensor['mag'], color='black', linewidth=1.5, label='Magnitud (Sensor)')
+ax2.axhline(y=0.4, color='orange', linestyle=':', label='Umbral 0.4')
 
-ax2.set_title('Magnitud del Vector Suavizada')
+# También ponemos las marcas manuales aquí
+for t in df_manual['rel_time']:
+    ax2.axvline(x=t, color='red', linestyle='--', linewidth=2)
+
+ax2.set_title('Análisis de Magnitud y Detección')
 ax2.set_xlabel('Tiempo desde el inicio (segundos)')
 ax2.set_ylabel('Magnitud')
 ax2.legend()
-ax2.grid(True, linestyle='--', alpha=0.6)
+ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
 plt.show()
+
+# Resumen científico para tu bitácora
+print(f"Puntos de sensor registrados: {len(df_sensor)}")
+print(f"Topes marcados manualmente: {len(df_manual)}")
