@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 
 # 1. Cargar el archivo
-file_path = 'data/viaje_1770688696371.csv' # Asegúrate que sea el nombre correcto
+file_path = 'data/viaje_1770727515795.csv' # Asegúrate que sea el nombre correcto
 df = pd.read_csv(file_path)
 
 # 2. Filtrar solo puntos con GPS válido

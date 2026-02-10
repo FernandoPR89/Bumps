@@ -2,7 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # 1. Cargar el nuevo archivo
-file_path = 'data/viaje_1770688696371.csv'
+#file_path = 'data/viaje_1770727515795.csv'
+file_path = 'data/viaje_1770732629526.csv'
 df = pd.read_csv(file_path)
 
 # 2. Preparación de datos
